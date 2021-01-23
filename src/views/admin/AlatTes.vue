@@ -1,30 +1,76 @@
 <template>
   <div>
-    <p v-if="isLoading">Loading...</p>
-    <div>
-      <input type="text" placeholder="nama" v-model="alatTesData.nama">
-      <button @click="add">Tambah</button>
+    <Loading v-if="isLoading"></Loading>
+    <ModalForm v-if="modal.show" :title="modal.type + ' Alat Tes'" @confirm="modalConfirm" @cancel="modal.show = false; resetSelected();">
+      <p v-if="modal.type == 'Delete'" class="mx-4">yakin ingin menghapus data?</p>
+      <div v-else class="w-full px-4">
+        <label class="block text-xl sm:text-sm font-medium text-gray-700">Nama</label>
+        <input type="text" v-model="alatTesData.nama" class="mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
+      </div>
+    </ModalForm>
+    <h1 class="text-4xl text-center mt-10 font-semibold">Daftar Alat Tes</h1>
+    <div class="container mx-5">
+      <button @click="showModal('Tambah')" class="bg-blue-500 hover:bg-blue-700 text-white p-3 rounded-lg">Tambah Data</button>
+      <div class="flex flex-wrap items-center mt-8 space-x-10">
+        <div v-for="(alat, index) in alat_tes" :key="index" class="rounded-2xl border-2 border-gray-200 bg-white">
+          <button @click="selectKelompokTes(alat.alat_tes_id)" class="flex flex-col justify-center items-center px-5 pt-5">
+            <svg class="w-28 text-blue-special" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+            <p class="text-orange-special text-2xl font-semibold">{{alat.nama}}</p>
+          </button>
+          <div class="flex items-center mt-2">
+            <button class="m-0 p-2 rounded-bl-2xl bg-yellow-200 w-full" @click="alatTesData.nama = alat.nama; showModal('Edit', alat.alat_tes_id)">Edit</button>
+            <button class="m-0 p-2 rounded-br-2xl bg-red-200 w-full" @click="showModal('Delete', alat.alat_tes_id)">Delete</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <ul>
-      <li v-for="(alat, index) in alat_tes" :key="index">{{alat.nama}}</li>
-    </ul>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import API from '../../config.api'
+import ModalForm from '../../components/ModalForm.vue'
+import Loading from '../../components/Loading.vue'
 export default {
+  components: {ModalForm, Loading},
   data(){
     return {
       isLoading: false,
+      modal: {
+        show: false,
+        type: 'Tambah'
+      },
       alat_tes: [],
+      selected_alat_tes_id: 0,
       alatTesData: {
         nama: ''
-      }
+      },
     }
   },
   methods: {
+    selectKelompokTes(id){
+      this.$router.push(`/admin/kelompok-tes/${id}`)
+    },
+    resetSelected(){
+      this.selected_alat_tes_id = 0
+      this.alatTesData = {
+        nama: ''
+      }
+    },
+    showModal(type, id){
+      this.modal.show = true
+      this.modal.type = type
+      if(id) this.selected_alat_tes_id = id
+    },
+    modalConfirm(){
+      if(this.modal.type === 'Tambah') this.add()
+      else if(this.modal.type === 'Edit') this.edit()
+      else this.destroy()
+      this.modal.show = false
+    },
     get(){
       this.isLoading = true
       const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
@@ -44,13 +90,47 @@ export default {
       axios.post(`${API.URL}/alat-tes`, this.alatTesData, {headers})
         .then(() => {
           this.get()
-          this.alatTesData.nama = ''
         })
         .catch(e => {
           console.log(e.response)
           alert('error')
         })
-        .finally(() => this.isLoading = false)
+        .finally(() => {
+          this.isLoading = false
+          this.alatTesData.nama = ''
+        })
+    },
+    edit(){
+      this.isLoading = true
+      const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
+      axios.put(`${API.URL}/alat-tes/${this.selected_alat_tes_id}`, this.alatTesData, {headers})
+        .then(() => {
+          this.get()
+        })
+        .catch(e => {
+          console.log(e.response)
+          alert('error')
+        })
+        .finally(() => {
+          this.isLoading = false
+          this.resetSelected()
+        })
+    },
+    destroy(){
+      this.isLoading = true
+      const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
+      axios.post(`${API.URL}/alat-tes/d/${this.selected_alat_tes_id}`, {}, {headers})
+        .then(() => {
+          this.get()
+        })
+        .catch(e => {
+          console.log(e.response)
+          alert('error')
+        })
+        .finally(() => {
+          this.isLoading = false
+          this.resetSelected()
+        })
     }
   },
   mounted(){

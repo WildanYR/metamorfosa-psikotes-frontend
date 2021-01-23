@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 
 import './index.css'
+import 'vue-select/dist/vue-select.css';
 
 Vue.config.productionTip = false
 
