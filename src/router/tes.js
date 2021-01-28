@@ -1,16 +1,30 @@
+import jwt_decode from 'jwt-decode'
+import store from '../store'
 import AppWrapper from '../wrappers/AppWrapper.vue'
 import AlatTes from '../views/user/AlatTes.vue'
 import Tes from '../views/user/Tes.vue'
-import Selesai from '../views/user/Selesai.vue'
+import Petunjuk from '../views/user/Petunjuk.vue'
 
 const route = {
   path: '',
   component: AppWrapper,
   children: [
-    { path: '/alat-tes', component: AlatTes },
+    { path: '/list-tes', component: AlatTes },
     { path: '/tes', component: Tes },
-    { path: '/selesai', component: Selesai }
-  ]
+    { path: '/petunjuk', component: Petunjuk }
+  ],
+  beforeEnter: (to, from, next) => {
+    const token = localStorage.getItem('token')
+    if(token) {
+      if(!store.state.isLogin) {
+        const user = jwt_decode(token)
+        store.commit('setUser', user)
+      }
+      if(store.state.user.role === 'admin') next('/admin/alat-tes')
+      else next()
+    }
+    else next('/login')
+  }
 }
 
 export default route

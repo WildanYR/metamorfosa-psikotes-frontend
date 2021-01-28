@@ -80,7 +80,7 @@ export default {
         })
         .catch(e => {
           console.log(e.response)
-          alert('error')
+          alert('error: '+e.response.data.message)
         })
         .finally(() => this.isLoading = false)
     },
@@ -93,7 +93,7 @@ export default {
         })
         .catch(e => {
           console.log(e.response)
-          alert('error')
+          alert('error: '+e.response.data.message)
         })
         .finally(() => {
           this.isLoading = false
@@ -109,7 +109,7 @@ export default {
         })
         .catch(e => {
           console.log(e.response)
-          alert('error')
+          alert('error: '+e.response.data.message)
         })
         .finally(() => {
           this.isLoading = false
@@ -125,7 +125,7 @@ export default {
         })
         .catch(e => {
           console.log(e.response)
-          alert('error')
+          alert('error: '+e.response.data.message)
         })
         .finally(() => {
           this.isLoading = false

@@ -1,3 +1,3 @@
 export default {
-  URL: 'http://arrosa.ddns.net:8080/api'
+  URL: 'http://localhost:3000/api'
 }
