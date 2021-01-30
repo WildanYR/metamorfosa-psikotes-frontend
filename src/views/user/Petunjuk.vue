@@ -1,7 +1,7 @@
 <template>
-  <div class="flex">
+  <div class="petunjuk flex">
     <Loading v-if="$store.state.isLoading"></Loading>
-    <div v-else class="p-4 flex-grow">
+    <div class="p-4 flex-grow">
       <h1 class="text-4xl font-semibold text-center">Petunjuk cara mengerjakan tes</h1>
       <p class="border-b-2 my-5"></p>
       <div class="w-full px-4 mt-4">
@@ -31,6 +31,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="postcss">
+  petunjuk table th,td {
+    @apply border-0
+  }
 </style>

@@ -11,8 +11,8 @@
     <h1 class="text-4xl text-center mt-10 font-semibold">Daftar Alat Tes</h1>
     <div class="container mx-5">
       <button @click="showModal('Tambah')" class="bg-blue-500 hover:bg-blue-700 text-white p-3 rounded-lg">Tambah Data</button>
-      <div class="flex flex-wrap items-center mt-8 space-x-10">
-        <div v-for="(alat, index) in alat_tes" :key="index" class="rounded-2xl border-2 border-gray-200 bg-white">
+      <div class="flex flex-wrap items-center mt-8">
+        <div v-for="(alat, index) in alat_tes" :key="index" class="rounded-2xl border-2 border-gray-200 bg-white m-4">
           <button @click="selectKelompokTes(alat.alat_tes_id)" class="flex flex-col justify-center items-center px-5 pt-5">
             <svg class="w-28 text-blue-special" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
@@ -79,7 +79,7 @@ export default {
           this.alat_tes = res.data.doc.alat_tes
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e)
           alert('error: '+e.response.data.message)
         })
         .finally(() => this.isLoading = false)
@@ -92,7 +92,7 @@ export default {
           this.get()
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e)
           alert('error: '+e.response.data.message)
         })
         .finally(() => {
@@ -108,7 +108,7 @@ export default {
           this.get()
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e)
           alert('error: '+e.response.data.message)
         })
         .finally(() => {
@@ -124,7 +124,7 @@ export default {
           this.get()
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e)
           alert('error: '+e.response.data.message)
         })
         .finally(() => {

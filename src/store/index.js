@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import axios from 'axios'
 import API from '../config.api'
+import router from '../router'
 
 Vue.use(Vuex)
 
@@ -11,11 +12,21 @@ const initialState = () => {
     isLoading: false,
     isLogin: false,
     isDoingTes: false,
+    isChangeSoal: false,
     user: {
       email: '',
       role: ''
     },
-    soal: {},
+    soal: {
+      kelompok_tes: [
+        {
+          soal: [],
+          petunjuk: '',
+          nama: ''
+        }
+      ]
+    },
+    time_passed: 0,
     alat_tes_id: 0,
     kelompokTesIndex: 0
   }
@@ -29,7 +40,7 @@ export default new Vuex.Store({
     },
 
     setLoading(state, loading){
-      state.loading = loading
+      state.isLoading = loading
     },
 
     setUser(state, user){
@@ -45,6 +56,10 @@ export default new Vuex.Store({
       state.soal = soal
     },
     
+    setChangeSoal(state, changeSoal){
+      state.isChangeSoal = changeSoal
+    },
+    
     setAlatTes(state, alat_tes_id){
       state.alat_tes_id = alat_tes_id
     },
@@ -58,10 +73,25 @@ export default new Vuex.Store({
       newSoal.kelompok_tes[state.kelompokTesIndex].soal[index].jawaban = jawaban
       state.soal = newSoal
     },
+
+    setRagu(state, {index, ragu}){
+      let newSoal = JSON.parse(JSON.stringify(state.soal))
+      newSoal.kelompok_tes[state.kelompokTesIndex].soal[index].ragu = ragu
+      state.soal = newSoal
+    },
+
+    setTimePassed(state, time){
+      state.time_passed = time
+    },
+
+    addTimePassed(state){
+      state.time_passed += 1
+    }
   },
+
   actions: {
     getSoal({commit, state}){
-      if(Object.keys(state.soal).length === 0){
+      if(state.isChangeSoal){
         commit('setLoading', true)
         const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
         axios.get(`${API.URL}/soal/tes/${state.alat_tes_id}`, {headers})
@@ -75,17 +105,79 @@ export default new Vuex.Store({
           })
           .finally(() => {
             commit('setLoading', false)
+            commit('setChangeSoal', false)
           })
       }
+    },
+
+    doTes({commit}, alat_tes_id){
+      commit('setAlatTes', alat_tes_id)
+      commit('setTes', true)
+      commit('setChangeSoal', true)
+      commit('setKelompokTes', 0)
+      commit('setTimePassed', 0)
+      router.push('/petunjuk')
+    },
+
+    submitTes({commit, state}){
+      commit('setLoading', true)
+      let jawaban = []
+      state.soal.kelompok_tes.forEach(kelompok => {
+        kelompok.soal.forEach(soalL => {
+          let jwb = soalL.jawaban
+          if(jwb == undefined) jwb = ''
+          jawaban.push({
+            soal_id: soalL.soal_id,
+            jawaban: jwb
+          })
+        })
+      })
+      const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
+      axios.post(`${API.URL}/soal/jawab`, {jawaban}, {headers})
+        .then(() => {
+          return axios.get(`${API.URL}/soal/submit/${state.alat_tes_id}`, {headers})
+        })
+        .then(() => {
+          commit('setAlatTes', 0)
+          commit('setTes', false)
+          commit('setChangeSoal', false)
+          commit('setKelompokTes', 0)
+          commit('setTimePassed', 0)
+          commit('setSoal', initialState().soal)
+          router.replace('/list-tes')
+        })
+        .catch(e => {
+          console.log(e)
+          alert('error: '+e.response.data.message)
+        })
+        .finally(() => {
+          commit('setLoading', false)
+        })
+    },
+
+    logout({commit}){
+      commit('resetState')
+      localStorage.removeItem('token')
+      router.push('/login')
     }
   },
   getters: {
     getSoals: (state) => {
-      if(state.soal && state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].soal
+      if(state.soal){
+        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].soal
+      }
       return []
     },
     getPetunjuk: (state) => {
-      if(state.soal && state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].petunjuk
+      if(state.soal){
+        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].petunjuk
+      }
+      return ''
+    },
+    getJenisSoal: (state) => {
+      if(state.soal){
+        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].jenis_soal
+      }
       return ''
     },
     getAlatTes: (state) => {
@@ -93,9 +185,14 @@ export default new Vuex.Store({
       return ''
     },
     getKelompokTes: (state) => {
-      if(state.soal && state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].nama
+      if(state.soal){
+        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].nama
+      }
       return ''
     },
+    getTimer: (state) => {
+      return state.soal.kelompok_tes[state.kelompokTesIndex].waktu * 60
+    }
   },
   plugins: [createPersistedState()],
 })

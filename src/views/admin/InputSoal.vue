@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <Loading v-if="isLoading"></Loading>
-    <div class="p-4 flex-grow">
+    <div class="=mt-20 ml-20 flex-grow w-2/3">
       <h1 class="text-4xl font-bold">Input Soal</h1>
       <p class="border-b-2 my-5"></p>
       <div class="w-full px-4 mt-4">
@@ -23,7 +23,7 @@
         <TextEditor v-model="soals[selectedSoalIndex].opsi[0].opsi"></TextEditor>
       </div>
     </div>
-    <div class="p-4 max-w-sm">
+    <div class="p-4 w-1/3 max-w-sm">
       <div class="text-center space-y-2">
         <h2 class="text-3xl font-bold">{{alat_tes}}</h2>
         <h3 class="text-xl font-medium">{{kelompok_tes}}</h3>

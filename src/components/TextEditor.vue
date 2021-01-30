@@ -316,17 +316,8 @@ export default {
   .editor__content ol{
     @apply list-decimal list-outside
   }
-  .editor__content img .w-28{
-    width: 7rem;
-  }
-  .editor__content img .w-36{
-    width: 9rem;
-  }
-  .editor__content img .w-52{
-    width: 13rem;
-  }
-  .editor__content img .w-72{
-    width: 18rem;
+  .editor__content img{
+    @apply w-28
   }
 
 </style>

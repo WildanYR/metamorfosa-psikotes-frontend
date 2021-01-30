@@ -8,11 +8,11 @@
       </div>
       <div class="mt-10">
         <p class="text-gray-700">Email</p>
-        <input type="text" placeholder="masukkan email" v-model="loginData.email" class="py-2 w-full border-b-2 border-blue-special focus:border-yellow-special focus:outline-none">
+        <input type="text" placeholder="masukkan email" v-model="loginData.email" @keydown.enter="login" class="py-2 w-full border-b-2 border-blue-special focus:border-yellow-special focus:outline-none">
       </div>
       <div class="mt-5">
         <p class="text-gray-700">Password</p>
-        <input type="password" placeholder="masukkan password" v-model="loginData.password" class="py-2 w-full border-b-2 border-blue-special focus:border-yellow-special focus:outline-none">
+        <input type="password" placeholder="masukkan password" v-model="loginData.password" @keydown.enter="login" class="py-2 w-full border-b-2 border-blue-special focus:border-yellow-special focus:outline-none">
       </div>
       <div class="mt-10 flex justify-between">
         <button @click="$router.push('/register')" class="text-sm text-blue-special focus:outline-none focus:text-yellow-special hover:text-yellow-special">belum punya akun?</button>
@@ -40,17 +40,20 @@ export default {
   },
   methods: {
     login(){
-      this.isLoading = true
-      axios.post(`${API.URL}/login`, this.loginData)
-        .then(res => {
-          localStorage.setItem('token', res.data.doc.token)
-          this.$router.push('/list-tes')
-        })
-        .catch(e => {
-          console.log(e.response)
-          alert('error: '+e.response.data.message)
-        })
-        .finally(() => this.isLoading = false)
+      if(!(this.loginData.email || this.loginData.password)) alert('lengkapi data')
+      else{
+        this.isLoading = true
+        axios.post(`${API.URL}/login`, this.loginData)
+          .then(res => {
+            localStorage.setItem('token', res.data.doc.token)
+            this.$router.push('/list-tes')
+          })
+          .catch(e => {
+            console.log(e)
+            alert('error: '+e.response.data.message)
+          })
+          .finally(() => this.isLoading = false)
+      }
     }
   }
 }

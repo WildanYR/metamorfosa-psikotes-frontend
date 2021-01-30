@@ -40,8 +40,6 @@
                   <input :disabled="loading.upload" type="file" @change="fileChange" accept="image/*" class="absolute opacity-0">
                   {{loading.upload? '...':'upload gambar'}}
                 </div>
-                <p>Ukuran</p>
-                <v-select v-model="imgSize" :options="['w-28', 'w-36', 'w-52', 'w-72']"></v-select>
               </div>
             </div>
             <div class="mt-5 w-full">
@@ -70,10 +68,8 @@
 <script>
 import API from '../config.api'
 import axios from 'axios'
-import VSelect from 'vue-select'
 export default {
   props: ['editorValue', 'editorInstance'],
-  components: {'v-select': VSelect},
   data(){
     return {
       imageLink: [],
@@ -128,15 +124,9 @@ export default {
         this.uploadImage()
       }
     },
-    getWidth(w){
-      if(w === 'w-28') return 'width: 7rem;'
-      if(w === 'w-36') return 'width: 9rem;'
-      if(w === 'w-52') return 'width: 13rem;'
-      if(w === 'w-72') return 'width: 18rem;'
-    },
     selectImage(){
       const imgUrl = this.imageLink[this.selectedIndex]
-      const imgTag = `<img src="${imgUrl}" :class="[${this.imgSize}]" />`
+      const imgTag = `<img src="${imgUrl}" />`
       const content = this.editorValue + imgTag
 
       this.editorInstance.setContent(content, true)

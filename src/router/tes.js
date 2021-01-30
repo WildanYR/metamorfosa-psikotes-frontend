@@ -21,7 +21,10 @@ const route = {
         store.commit('setUser', user)
       }
       if(store.state.user.role === 'admin') next('/admin/alat-tes')
-      else next()
+      else {
+        if(to.path === '/list-tes' && store.state.isDoingTes) next('/petunjuk')
+        else next()
+      }
     }
     else next('/login')
   }

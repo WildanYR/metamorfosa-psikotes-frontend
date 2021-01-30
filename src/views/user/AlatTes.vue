@@ -2,7 +2,7 @@
   <div>
     <Loading v-if="isLoading"></Loading>
     <h1 class="text-2xl text-center mt-10 font-semibold">pilih tes yang ingin dikerjakan</h1>
-    <div class="container mx-5">
+    <div v-if="!$store.state.isDoingTes" class="container mx-5">
       <div class="flex flex-wrap justify-center mt-8">
         <div v-for="(alat, index) in alat_tes" :key="index" class="rounded-lg border-2 border-gray-200 bg-white m-4">
           <div class="flex flex-col justify-center items-center px-5 pt-5">
@@ -12,10 +12,11 @@
             </svg>
             <p class="text-blue-special text-2xl font-semibold mt-2">{{alat.nama}}</p>
           </div>
-          <button @click="kerjakanSoal(alat.alat_tes_id)" class="m-0 mt-2 p-2 rounded-b-lg bg-blue-special w-full text-white font-semibold hover:bg-blue-900 focus:outline-none" :disabled="alat.dikerjakan">kerjakan</button>
+          <button @click="kerjakanSoal(alat.alat_tes_id)" :class="[alat.dikerjakan?'bg-gray-300':'bg-blue-special text-white hover:bg-blue-900']" class="m-0 mt-2 p-2 rounded-b-lg w-full font-semibold focus:outline-none" :disabled="alat.dikerjakan">kerjakan</button>
         </div>
       </div>
     </div>
+    <div v-else class="text-center text-4xl font-bold text-red-500">Silahkan refresh browser</div>
   </div>
 </template>
 
@@ -33,9 +34,7 @@ export default {
   },
   methods:{
     kerjakanSoal(alat_tes_id){
-      this.$store.commit('setAlatTes', alat_tes_id)
-      this.$store.commit('setTes', true)
-      this.$router.push('/petunjuk')
+      this.$store.dispatch('doTes', alat_tes_id)
     }
   },
   mounted(){
@@ -48,14 +47,18 @@ export default {
       })
       .then(res => {
         const hasilTes = res.data.doc.alat_tes
-        this.alat_tes.forEach(alat => {
+        const temp = this.alat_tes.map(alat => {
           hasilTes.forEach(hasil => {
-            if(alat.alat_tes_id === hasil.alat_tes_id) alat.dikerjakan = true
+            if(alat.alat_tes_id === hasil.alat_tes_id) {
+              alat.dikerjakan = true
+            }
           })
+          return alat
         })
+        this.alat_tes = temp
       })
       .catch(e => {
-        console.log(e.response)
+        console.log(e)
         alert('error: '+e.response.data.message)
       })
       .finally(() => this.isLoading = false)

@@ -14,7 +14,7 @@
         </div>
         <div class="w-full px-4">
           <label class="block text-xl sm:text-sm font-medium text-gray-700">Jenis Soal</label>
-          <v-select v-model="kelompokTesData.jenis_soal" :options="['pilihan_ganda', 'uraian', 'angka', 'opini', 'custom']"></v-select>
+          <v-select v-model="kelompokTesData.jenis_soal" :options="['pilihan_ganda', 'pilihan_ganda_sejajar', 'uraian', 'angka', 'opini', 'custom']"></v-select>
         </div>
         <div class="w-full px-4">
           <label class="block text-xl sm:text-sm font-medium text-gray-700">Petunjuk</label>
@@ -25,8 +25,8 @@
     <h1 class="text-4xl text-center mt-10 font-semibold">Daftar Kelompok Tes</h1>
     <div class="container mx-5">
       <button @click="showModal('Tambah')" class="bg-blue-500 hover:bg-blue-700 text-white p-3 rounded-lg">Tambah Data</button>
-      <div class="flex flex-wrap items-center mt-8 space-x-10">
-        <div v-for="(kelompok, index) in kelompok_tes" :key="index" class="rounded-2xl border-2 border-gray-200 bg-white">
+      <div class="flex flex-wrap items-center mt-8">
+        <div v-for="(kelompok, index) in kelompok_tes" :key="index" class="rounded-2xl border-2 border-gray-200 bg-white m-4">
           <button @click="selectSoal(kelompok.kelompok_tes_id, kelompok.jenis_soal)" class="flex flex-col justify-center items-center px-5 pt-5 pb-2">
             <svg class="w-28 text-blue-special" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -128,7 +128,7 @@ export default {
           this.get()
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e)
           alert('error: '+e.response.data.message)
         })
         .finally(() => this.isLoading = false)
@@ -142,7 +142,7 @@ export default {
           this.get()
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e)
           alert('error: '+e.response.data.message)
         })
         .finally(() => {
@@ -159,7 +159,7 @@ export default {
           this.get()
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e)
           alert('error: '+e.response.data.message)
         })
         .finally(() => {

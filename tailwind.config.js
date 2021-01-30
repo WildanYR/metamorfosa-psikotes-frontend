@@ -18,6 +18,9 @@ module.exports = {
        orange: {
          special: '#ff7c1f',
        }
+      },
+      zIndex: {
+        '-10': '-10',
       }
     },
   },
