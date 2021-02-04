@@ -44,15 +44,15 @@
       </div>
       <div v-else class="w-full px-4 mt-10">
         <p class="block text-xl font-bold text-gray-700 mb-3">Opsi</p>
-        <RadioTes value="A" @updateSelected="saveJawaban" :active="soals[selectedSoalIndex].jawaban === 'A'">Ya</RadioTes>
-        <RadioTes value="B" @updateSelected="saveJawaban" :active="soals[selectedSoalIndex].jawaban === 'B'">Tidak</RadioTes>
+        <RadioTes :value="soals[selectedSoalIndex].opsi[0].opsi" @updateSelected="saveJawaban" :active="soals[selectedSoalIndex].jawaban === soals[selectedSoalIndex].opsi[0].opsi">Ya</RadioTes>
+        <RadioTes value="-" @updateSelected="saveJawaban" :active="soals[selectedSoalIndex].jawaban === '-'">Tidak</RadioTes>
       </div>
     </div>
     <div class="p-4 w-1/3 max-w-sm border-2">
       <div class="text-center space-y-2">
         <h2 class="text-3xl font-bold">{{alat_tes}}</h2>
         <h3 class="text-xl font-medium">{{kelompok_tes}}</h3>
-        <Timer v-if="timer !== 0" :countdown="timer" @timeup="modal.type = $store.state.kelompokTesIndex !== $store.state.soal.kelompok_tes.length-1?'next':'end'; handleNext()"></Timer>
+        <Timer v-if="timer !== 0" :countdown="timer" @timeup="timeup"></Timer>
       </div>
       <p class="border-b-2 my-5"></p>
       <div>
@@ -98,7 +98,11 @@ export default {
     //   if(this.soals[this.selectedSoalIndex].ragu) this.$store.commit('setRagu', {index: this.selectedSoalIndex, ragu: false})
     //   else this.$store.commit('setRagu', {index: this.selectedSoalIndex, ragu: true})
     // },
-
+    timeup(){
+      alert('waktu telah habis')
+      this.modal.type = this.$store.state.kelompokTesIndex !== this.$store.state.soal.kelompok_tes.length-1?'next':'end'
+      this.handleNext()
+    },
     handleNext(){
       if(this.modal.type === 'next'){
         this.$store.commit('setKelompokTes', this.$store.state.kelompokTesIndex + 1)
@@ -132,10 +136,11 @@ export default {
   },
   mounted(){
     if (localStorage.getItem('reloaded')) {
-        localStorage.removeItem('reloaded');
+        localStorage.removeItem('reloaded')
+        // this.$store.dispatch('checkSoal')
     } else {
-        localStorage.setItem('reloaded', '1');
-        location.reload();
+        localStorage.setItem('reloaded', '1')
+        location.reload()
     }
   }
 }

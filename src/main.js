@@ -4,7 +4,10 @@ import router from './router'
 import store from './store'
 
 import './index.css'
-import 'vue-select/dist/vue-select.css';
+import 'vue-select/dist/vue-select.css'
+
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
 
 Vue.config.productionTip = false
 

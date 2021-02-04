@@ -4,6 +4,7 @@ import AppWrapper from '../wrappers/AppWrapper.vue'
 import AlatTes from '../views/admin/AlatTes.vue'
 import KelompokTes from '../views/admin/KelompokTes.vue'
 import InputSoal from '../views/admin/InputSoal.vue'
+import HasilTes from '../views/admin/HasilTes.vue'
 
 const route = {
   path: '/admin',
@@ -12,6 +13,7 @@ const route = {
     { path: 'alat-tes', component: AlatTes },
     { path: 'kelompok-tes/:alat_tes_id', component: KelompokTes },
     { path: 'soal/:kelompok_tes_id/:jenis_soal', component: InputSoal },
+    { path: 'hasil/:alat_tes_id', component: HasilTes },
   ],
   beforeEnter: (to, from, next) => {
     const token = localStorage.getItem('token')

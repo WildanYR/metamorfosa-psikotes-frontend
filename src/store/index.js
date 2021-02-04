@@ -67,6 +67,10 @@ export default new Vuex.Store({
     setKelompokTes(state, kelompokTesIndex){
       state.kelompokTesIndex = kelompokTesIndex
     },
+    
+    // setContentKelompokTes(state, content){
+    //   state.soal.kelompok_tes[state.kelompokTesIndex] = content
+    // },
 
     setJawaban(state, {index, jawaban}){
       let newSoal = JSON.parse(JSON.stringify(state.soal))
@@ -154,6 +158,13 @@ export default new Vuex.Store({
           commit('setLoading', false)
         })
     },
+
+    // checkSoal({commit, state}){
+    //   if(state.kelompokTesIndex > state.soal.kelompok_tes.length) commit('setKelompokTes', state.kelompokTesIndex-1)
+    //   if(!state.soal.kelompok_tes[state.kelompokTesIndex].soal.length || !state.soal.kelompok_tes[state.kelompokTesIndex].petunjuk){
+
+    //   }
+    // },
 
     logout({commit}){
       commit('resetState')
