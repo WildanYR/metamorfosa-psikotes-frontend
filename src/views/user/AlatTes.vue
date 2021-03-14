@@ -34,7 +34,26 @@ export default {
   },
   methods:{
     kerjakanSoal(alat_tes_id){
-      this.$store.dispatch('doTes', alat_tes_id)
+      this.isLoading = true
+      const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
+      axios.get(`${API.URL}/soal/tes/${alat_tes_id}`, {headers})
+        .then(res => {
+          const alat_tes = res.data.doc.alat_tes
+          this.$store.commit('setSoal', alat_tes)
+          this.$store.commit('setAlatTes', alat_tes_id)
+          this.$store.commit('setTes', true)
+          this.$store.commit('setKelompokTes', 0)
+          this.$store.commit('setTimePassed', 0)
+          this.$router.push('/petunjuk')
+        })
+        .catch(e => {
+          console.log(e)
+          alert('error: '+e.response.data.message)
+        })
+        .finally(() => {
+          this.isLoading = false
+          // this.$store.commit('setChangeSoal', false)
+        })
     }
   },
   mounted(){
@@ -65,7 +84,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

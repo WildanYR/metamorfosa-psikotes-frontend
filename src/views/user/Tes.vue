@@ -62,7 +62,6 @@
         </div>
       </div>
       <div class="mt-3">
-        <!-- <button @click="setRagu" :class="[soals[selectedSoalIndex].ragu?'bg-red-600 text-white':'bg-gray-200']" class="p-3 rounded-xl font-semibold w-full">Ragu-Ragu</button> -->
         <button v-if="$store.state.kelompokTesIndex !== $store.state.soal.kelompok_tes.length-1" @click="modal.type= 'next';modal.show = true" class="p-3 mt-5 rounded-xl font-semibold bg-yellow-special w-full">Kelompok Soal Selanjutnya</button>
         <button v-else @click="modal.type= 'end';modal.show = true" class="p-3 mt-5 rounded-md bg-blue-special text-white font-semibold hover:bg-blue-700 w-full">Submit Tes</button>
       </div>
@@ -94,10 +93,6 @@ export default {
     saveJawaban(jawaban){
       this.$store.commit('setJawaban', {index: this.selectedSoalIndex, jawaban})
     },
-    // setRagu(){
-    //   if(this.soals[this.selectedSoalIndex].ragu) this.$store.commit('setRagu', {index: this.selectedSoalIndex, ragu: false})
-    //   else this.$store.commit('setRagu', {index: this.selectedSoalIndex, ragu: true})
-    // },
     timeup(){
       alert('waktu telah habis')
       this.modal.type = this.$store.state.kelompokTesIndex !== this.$store.state.soal.kelompok_tes.length-1?'next':'end'
@@ -137,7 +132,6 @@ export default {
   mounted(){
     if (localStorage.getItem('reloaded')) {
         localStorage.removeItem('reloaded')
-        // this.$store.dispatch('checkSoal')
     } else {
         localStorage.setItem('reloaded', '1')
         location.reload()

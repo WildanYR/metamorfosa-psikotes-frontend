@@ -12,7 +12,6 @@ const initialState = () => {
     isLoading: false,
     isLogin: false,
     isDoingTes: false,
-    isChangeSoal: false,
     user: {
       email: '',
       role: ''
@@ -28,7 +27,8 @@ const initialState = () => {
     },
     time_passed: 0,
     alat_tes_id: 0,
-    kelompokTesIndex: 0
+    kelompokTesIndex: 0,
+    sesi_aktif: null
   }
 }
 
@@ -56,10 +56,6 @@ export default new Vuex.Store({
       state.soal = soal
     },
     
-    setChangeSoal(state, changeSoal){
-      state.isChangeSoal = changeSoal
-    },
-    
     setAlatTes(state, alat_tes_id){
       state.alat_tes_id = alat_tes_id
     },
@@ -67,10 +63,6 @@ export default new Vuex.Store({
     setKelompokTes(state, kelompokTesIndex){
       state.kelompokTesIndex = kelompokTesIndex
     },
-    
-    // setContentKelompokTes(state, content){
-    //   state.soal.kelompok_tes[state.kelompokTesIndex] = content
-    // },
 
     setJawaban(state, {index, jawaban}){
       let newSoal = JSON.parse(JSON.stringify(state.soal))
@@ -90,39 +82,14 @@ export default new Vuex.Store({
 
     addTimePassed(state){
       state.time_passed += 1
+    },
+
+    setSesiAktif(state, sesi){
+      state.sesi_aktif = sesi
     }
   },
 
   actions: {
-    getSoal({commit, state}){
-      if(state.isChangeSoal){
-        commit('setLoading', true)
-        const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
-        axios.get(`${API.URL}/soal/tes/${state.alat_tes_id}`, {headers})
-          .then(res => {
-            const alat_tes = res.data.doc.alat_tes
-            commit('setSoal', alat_tes)
-          })
-          .catch(e => {
-            console.log(e)
-            alert('error: '+e.response.data.message)
-          })
-          .finally(() => {
-            commit('setLoading', false)
-            commit('setChangeSoal', false)
-          })
-      }
-    },
-
-    doTes({commit}, alat_tes_id){
-      commit('setAlatTes', alat_tes_id)
-      commit('setTes', true)
-      commit('setChangeSoal', true)
-      commit('setKelompokTes', 0)
-      commit('setTimePassed', 0)
-      router.push('/petunjuk')
-    },
-
     submitTes({commit, state}){
       commit('setLoading', true)
       let jawaban = []
@@ -144,7 +111,6 @@ export default new Vuex.Store({
         .then(() => {
           commit('setAlatTes', 0)
           commit('setTes', false)
-          commit('setChangeSoal', false)
           commit('setKelompokTes', 0)
           commit('setTimePassed', 0)
           commit('setSoal', initialState().soal)
@@ -159,13 +125,6 @@ export default new Vuex.Store({
         })
     },
 
-    // checkSoal({commit, state}){
-    //   if(state.kelompokTesIndex > state.soal.kelompok_tes.length) commit('setKelompokTes', state.kelompokTesIndex-1)
-    //   if(!state.soal.kelompok_tes[state.kelompokTesIndex].soal.length || !state.soal.kelompok_tes[state.kelompokTesIndex].petunjuk){
-
-    //   }
-    // },
-
     logout({commit}){
       commit('resetState')
       localStorage.removeItem('token')
@@ -175,19 +134,19 @@ export default new Vuex.Store({
   getters: {
     getSoals: (state) => {
       if(state.soal){
-        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].soal
+        return state.soal.kelompok_tes[state.kelompokTesIndex].soal
       }
       return []
     },
     getPetunjuk: (state) => {
       if(state.soal){
-        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].petunjuk
+        return state.soal.kelompok_tes[state.kelompokTesIndex].petunjuk
       }
       return ''
     },
     getJenisSoal: (state) => {
       if(state.soal){
-        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].jenis_soal
+        return state.soal.kelompok_tes[state.kelompokTesIndex].jenis_soal
       }
       return ''
     },
@@ -197,13 +156,13 @@ export default new Vuex.Store({
     },
     getKelompokTes: (state) => {
       if(state.soal){
-        if(state.soal.kelompok_tes.length) return state.soal.kelompok_tes[state.kelompokTesIndex].nama
+        return state.soal.kelompok_tes[state.kelompokTesIndex].nama
       }
       return ''
     },
     getTimer: (state) => {
       return state.soal.kelompok_tes[state.kelompokTesIndex].waktu * 60
-    }
+    },
   },
   plugins: [createPersistedState()],
 })
