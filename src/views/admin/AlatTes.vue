@@ -9,15 +9,19 @@
       </div>
     </ModalForm>
     <ModalForm v-if="modalSesi" title="Pilih Sesi" @confirm="changeSesi()" @cancel="new_sesi = ''; sesi_selected_id = $store.state.sesi_aktif.sesi_id; modalSesi = false">
-      <div>
+      <div class="mb-3">
         <label class="block text-xl sm:text-sm font-medium text-gray-700">tambah sesi baru</label>
-        <input type="text" v-model="new_sesi" placeholder="nama sesi" class="mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
-        <button @click="addSesi()" class="text-white font-bold p-5 w-full bg-blue-500 hover:bg-blue-900">tambah sesi</button>
+        <input type="text" v-model="new_sesi" placeholder="nama sesi" class="inline-block mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
+        <button @click="addSesi(); new_sesi = ''" class="inline-block ml-2 text-white font-semibold p-2 text-sm rounded bg-blue-500 hover:bg-blue-900">tambah sesi</button>
       </div>
+      <h3 class="text-center text-xl font-semibold text-gray-700">daftar sesi</h3>
+      <div class="mt-1 mb-5 w-full border border-gray-200"></div>
       <div class="w-full px-4 flex flex-wrap">
-        <div v-for="(ss, index) in sesi" :key="index" @click="sesi_selected_id = ss.sesi_id" :class="[ss.sesi_id == sesi_selected_id?'bg-blue-300 text-white':'bg-gray-400']" class="px-2 flex">
-          <p>{{ss.nama}}</p>
-          <button @click="deleteSesi(ss.sesi_id)">
+        <div v-for="(ss, index) in sesi" :key="index" class="m-2 flex cursor-pointer">
+          <div @click="sesi_selected_id = ss.sesi_id" class="p-2 rounded-l" :class="[ss.sesi_id == sesi_selected_id?'bg-blue-600 text-white':'bg-gray-200']">
+            <p>{{ss.nama}}</p>
+          </div>
+          <button @click="deleteSesi(ss.sesi_id)" class="p-2 text-gray-200 bg-red-500 rounded-r">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
               <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -26,13 +30,38 @@
         </div>
       </div>
     </ModalForm>
-    <button @click="setTesAktif" :class="[tes_aktif==='1'?'bg-green-700 hover:bg-red-700':'bg-red-700 hover:bg-green-700']" class="text-white font-bold p-5 w-full">Tes saat ini sedang {{tes_aktif==='1'?'aktif':'tidak aktif'}}</button>
-    <div v-if="$store.state.sesi_aktif" class="container mx-5 flex items-center">
-      <div @click="modalSesi = true" class="border-2 rounded p-7 hover:bg-gray-400">
-        <p>Sesi tes saat ini</p>
+    <ModalForm v-if="modalAkun" title="ubah akun admin" @confirm="ubahAkun()" @cancel="modalAkun = false; resetAkun()">
+      <div class="w-full px-4 mt-3">
+        <label class="block text-xl sm:text-sm font-medium text-gray-700">email</label>
+        <input type="text" v-model="new_akun.email" class="mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
+      </div>
+      <div class="w-full px-4 mt-3">
+        <label class="block text-xl sm:text-sm font-medium text-gray-700">password saat ini</label>
+        <input :type="ganti_akun.show_password?'text':'password'" v-model="new_akun.password" class="mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
+      </div>
+      <div class="w-full px-4 mt-3">
+        <label class="block text-xl sm:text-sm font-medium text-gray-700">password baru</label>
+        <input :type="ganti_akun.show_password?'text':'password'" v-model="new_akun.new_password" class="mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
+      </div>
+      <div class="px-4 mt-3">
+        <button @click="ganti_akun.show_password = !ganti_akun.show_password" class="text-sm p-2 rounded-lg" :class="[ganti_akun.show_password?'bg-gray-200 hover:bg-gray-400':'bg-blue-500 hover:bg-blue-700 text-white']">{{ganti_akun.show_password?'sembunyikan password':'tampilkan password'}}</button>
+      </div>
+    </ModalForm>
+    <div class="mt-5 flex flex-wrap justify-center space-x-5">
+      <div @click="setTesAktif" class="text-center text-white rounded p-7 cursor-pointer" :class="[tes_aktif=='1'?'bg-green-500 border-b-4 border-green-600 hover:bg-green-600':'bg-red-500 border-b-4 border-red-600 hover:bg-red-600']">
+        <p class="font-semibold text-lg">status tes</p>
+        <p>{{tes_aktif==='1'?'tes sedang dilaksanakan':'tes tidak dilaksanakan'}}</p>
+      </div>
+      <div v-if="$store.state.sesi_aktif" @click="modalSesi = true" class="text-center text-white rounded p-7 bg-purple-500 border-b-4 border-purple-600 hover:bg-purple-600 cursor-pointer">
+        <p class="font-semibold text-lg">sesi tes</p>
         <p>{{$store.state.sesi_aktif.nama}}</p>
       </div>
+      <div @click="modalAkun = true" class="text-center text-white rounded p-7 bg-yellow-500 border-b-4 border-yellow-600 hover:bg-yellow-600 cursor-pointer">
+        <p class="font-semibold text-lg">ubah akun admin</p>
+        <p>{{$store.state.user.email}}</p>
+      </div>
     </div>
+
     <div class="container mx-5">
       <h1 class="text-4xl text-center mt-10 font-semibold">Daftar Alat Tes</h1>
       <button @click="showModal('Tambah')" class="bg-blue-500 hover:bg-blue-700 text-white p-3 rounded-lg">Tambah Data</button>
@@ -70,6 +99,7 @@ export default {
         type: 'Tambah'
       },
       modalSesi: false,
+      modalAkun: false,
       alat_tes: [],
       selected_alat_tes_id: 0,
       alatTesData: {
@@ -79,6 +109,14 @@ export default {
       sesi: [],
       sesi_selected_id: 0,
       new_sesi: '',
+      new_akun: {
+        email: '',
+        new_password: '',
+        password: ''
+      },
+      ganti_akun: {
+        show_password: false,
+      }
     }
   },
   methods: {
@@ -248,13 +286,38 @@ export default {
           })
           .finally(() => {
             this.isLoading = false
-            this.modalSesi = false
+          })
+      }
+    },
+
+    resetAkun(){
+      this.new_akun.email = this.$store.state.user.email
+      this.new_akun.new_password = ''
+      this.new_akun.password = ''
+      this.ganti_akun.show_password = false
+    },
+    ubahAkun(){
+      const del = confirm('anda yakin ingin mengubah akun admin?')
+      if(del){
+        this.isLoading = true
+        const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
+        axios.put(`${API.URL}/user/admin`, this.new_akun, {headers})
+          .then(() => {
+            this.$store.dispatch('logout')
+          })
+          .catch(e => {
+            console.log(e)
+            alert('error: '+e.response.data.message)
+          })
+          .finally(() => {
+            this.isLoading = false
           })
       }
     }
 
   },
   mounted(){
+    this.new_akun.email = this.$store.state.user.email
     this.get()
     this.getSesi()
   },
