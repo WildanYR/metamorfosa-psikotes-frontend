@@ -25,12 +25,11 @@
         </div>
         <div class="ml-2">
           <p class="text-gray-700">Tanggal Lahir</p>
-          <input type="text" placeholder="31-12-1997" v-model="registerData.tanggal_lahir" @keydown.enter="register" class="py-2 w-full border-b-2 border-yellow-special focus:border-blue-special focus:outline-none">
+          <input type="text" placeholder="masukkan tanggal lahir" v-model="registerData.tanggal_lahir" @keydown.enter="register" class="py-2 w-full border-b-2 border-yellow-special focus:border-blue-special focus:outline-none">
         </div>
       </div>
       <div class="mt-5">
         <p class="text-gray-700">Jenis Kelamin</p>
-        <!-- <input type="text" placeholder="masukkan nama lengkap" v-model="registerData.nama_lengkap" @keydown.enter="register" class="py-2 w-full border-b-2 border-yellow-special focus:border-blue-special focus:outline-none"> -->
         <v-select v-model="registerData.jenis_kelamin" :options="['laki-laki', 'perempuan']"></v-select>
       </div>
       <div class="mt-5">

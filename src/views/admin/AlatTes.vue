@@ -4,8 +4,14 @@
     <ModalForm v-if="modal.show" :title="modal.type + ' Alat Tes'" @confirm="modalConfirm" @cancel="modal.show = false; resetSelected();">
       <p v-if="modal.type == 'Delete'" class="mx-4">yakin ingin menghapus data?</p>
       <div v-else class="w-full px-4">
-        <label class="block text-xl sm:text-sm font-medium text-gray-700">Nama</label>
-        <input type="text" v-model="alatTesData.nama" class="mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
+        <div>
+          <label class="block text-xl sm:text-sm font-medium text-gray-700">Nama</label>
+          <input type="text" v-model="alatTesData.nama" class="mt-1 py-1 px-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm text-lg sm:text-sm border border-gray-300 rounded">
+        </div>
+        <div v-if="modal.type == 'Edit'" class="mt-5">
+          <p class="text-xl sm:text-sm font-medium text-gray-700">gunakan alat tes</p>
+          <input type="checkbox" v-model="alatTesData.active">
+        </div>
       </div>
     </ModalForm>
     <ModalForm v-if="modalSesi" title="Pilih Sesi" @confirm="changeSesi()" @cancel="new_sesi = ''; sesi_selected_id = $store.state.sesi_aktif.sesi_id; modalSesi = false">
@@ -68,16 +74,16 @@
       <div class="flex flex-wrap items-center mt-8">
         <div v-for="(alat, index) in alat_tes" :key="index" class="rounded-2xl border-2 border-gray-200 bg-white m-4">
           <button @click="selectKelompokTes(alat.alat_tes_id)" class="flex flex-col justify-center items-center px-5 pt-5 pb-2">
-            <svg class="w-28 text-blue-special" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg :class="[alat.active?'text-blue-special':'text-gray-400']" class="w-28" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
-            <p class="text-orange-special text-2xl font-semibold">{{alat.nama}}</p>
+            <p :class="[alat.active?'text-orange-special':'text-gray-300']" class="text-2xl font-semibold">{{alat.nama}}</p>
           </button>
           <div class="flex items-center">
-            <button class="m-0 p-2 bg-yellow-200 w-full" @click="alatTesData.nama = alat.nama; showModal('Edit', alat.alat_tes_id)">Edit</button>
-            <button class="m-0 p-2 bg-red-200 w-full" @click="showModal('Delete', alat.alat_tes_id)">Delete</button>
+            <button :class="[alat.active?'bg-yellow-200':'bg-gray-300']" class="m-0 p-2 w-full" @click="alatTesData = alat; showModal('Edit', alat.alat_tes_id)">Edit</button>
+            <button :class="[alat.active?'bg-red-200':'bg-gray-300']" class="m-0 p-2 w-full" @click="showModal('Delete', alat.alat_tes_id)">Delete</button>
           </div>
-          <button class="m-0 p-2 rounded-b-2xl bg-blue-200 w-full" @click="$router.push('/admin/hasil/'+alat.alat_tes_id)">Hasil Tes</button>
+          <button :class="[alat.active?'bg-blue-200':'bg-gray-300']" class="m-0 p-2 rounded-b-2xl w-full" @click="$router.push('/admin/hasil/'+alat.alat_tes_id)">Hasil Tes</button>
         </div>
       </div>
     </div>
@@ -103,7 +109,8 @@ export default {
       alat_tes: [],
       selected_alat_tes_id: 0,
       alatTesData: {
-        nama: ''
+        nama: '',
+        active: true
       },
       tes_aktif: '',
       sesi: [],
@@ -126,7 +133,8 @@ export default {
     resetSelected(){
       this.selected_alat_tes_id = 0
       this.alatTesData = {
-        nama: ''
+        nama: '',
+        active: true
       }
     },
     showModal(type, id){
@@ -171,6 +179,7 @@ export default {
         .finally(() => {
           this.isLoading = false
           this.alatTesData.nama = ''
+          this.alatTesData.active = true
         })
     },
     edit(){

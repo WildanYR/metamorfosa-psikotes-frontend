@@ -59,7 +59,7 @@ export default {
   mounted(){
     this.isLoading = true
     const headers = {Authorization: 'Bearer ' + localStorage.getItem('token')}
-    axios.get(`${API.URL}/alat-tes`, {headers})
+    axios.get(`${API.URL}/alat-tes?active=y`, {headers})
       .then(res => {
         this.alat_tes = res.data.doc.alat_tes
         return axios.get(`${API.URL}/soal/alat-tes`, {headers})
